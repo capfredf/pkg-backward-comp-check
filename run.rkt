@@ -8,4 +8,4 @@
 (update-all "my-catalog")
 (define catalog-path (path->complete-path "my-catalog"))
 (parameterize ([current-directory RACKET-BUILD])
-  (system (format "make site SRRC_CATALOG=~a" catalog-path)))
+  (system (format "make site SRC_CATALOG=~a" catalog-path)))
