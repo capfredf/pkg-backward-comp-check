@@ -1,3 +1,4 @@
 my-catalog/
 *.zo
 *.dep
+workdir

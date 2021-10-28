@@ -1,8 +1,4 @@
 #lang racket/base
-;; Usage:
-;;   racket edit-catalog.rkt my-catalog/
-
-;; ---
 ;; TODO edit these variables
 (define pkg*
   '("source-syntax" "typed-racket" "typed-racket-doc"
