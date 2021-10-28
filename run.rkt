@@ -4,6 +4,7 @@
          "catalog-updator.rkt"
          racket/set
          racket/file
+         racket/pretty
          racket/system
          "build.rkt")
 
@@ -19,12 +20,13 @@
 
 (define (build-dependent-packages!)
   (define g (get-dependency-graph))
-  (define pkgs (set->list
-                (foldl (lambda (p acc)
-                         (set-union (multidict-ref (multidict-inverse g) p) acc))
-                       (set)
-                       (list "source-syntax" "typed-racket" "typed-racket-doc"
-                             "typed-racket-lib" "typed-racket-more" "typed-racket-test"))))
-  (build-packages pkgs))
+  (define pkgs (sort (set->list
+                      (foldl (lambda (p acc)
+                               (set-union (multidict-ref (multidict-inverse g) p) acc))
+                             (set)
+                             (list "source-syntax" "typed-racket" "typed-racket-doc"
+                                   "typed-racket-lib" "typed-racket-more" "typed-racket-test")))
+                     string<=?))
+  (build-packages (list "yaml")))
 
 (build-dependent-packages!)

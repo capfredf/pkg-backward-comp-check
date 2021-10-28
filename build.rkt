@@ -17,7 +17,6 @@
 
    #:pkgs-for-version "8.3.0.5"
 
-   #:extra-packages '("main-distribution-test")
    #:only-packages packages
 
    #:built-at-site? #t
@@ -31,7 +30,6 @@
           (make-docker-vms "pkg-build")
           #;
           (make-docker-vms "pkg-build2"))
-
    #:steps (steps-in 'download 'site)))
 
 ;; Set to #f to disable the memory limit on cnotainers; if not #f,
@@ -42,12 +40,12 @@
 (define (make-docker-vms name)
   (docker-vm
    #:name name
-   #:from-image "racket/pkg-build:pkg-build-deps"
+   #:from-image "capfredf/pkg-build:latest"
    #:env test-env
    #:shell xvfb-shell
    #:memory-mb memory-mb
    #:minimal-variant (docker-vm #:name (string-append name "-min")
-                                #:from-image "racket/pkg-build:pkg-build-deps-min"
+                                #:from-image "capfredf/pkg-build-min:latest"
                                 #:memory-mb memory-mb)))
 
 ;; Some packages may depend on this, since pkg-build.racket-lang.org
