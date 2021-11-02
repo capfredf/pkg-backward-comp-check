@@ -12,29 +12,20 @@
   (build-pkgs
    #:work-dir workdir
    #:snapshot-url "http://127.0.0.1:8000"
-
    #:installer-name "racket-8.3.0.5-x86_64-linux.sh"
-
    #:pkgs-for-version "8.3.0.5"
-
    #:only-packages packages
-
    #:built-at-site? #t
    #:site-url "https://127.0.0.1:8000"
-
    #:install-doc-list-file "orig-docs.txt"
-
    #:timeout 2400
-
    #:vms (list
-          (make-docker-vms "pkg-build")
-          #;
-          (make-docker-vms "pkg-build2"))
+          (make-docker-vms "pkg-build"))
    #:steps (steps-in 'download 'site)))
 
 ;; Set to #f to disable the memory limit on cnotainers; if not #f,
 ;; twice as much memory will be available counting swap:
-(define memory-mb 1024)
+(define memory-mb (* 1024 5))
 
 ;; Create Docker "full" and "minimal" variants:
 (define (make-docker-vms name)
@@ -44,6 +35,7 @@
    #:env test-env
    #:shell xvfb-shell
    #:memory-mb memory-mb
+   #;#;
    #:minimal-variant (docker-vm #:name (string-append name "-min")
                                 #:from-image "capfredf/pkg-build-min:latest"
                                 #:memory-mb memory-mb)))

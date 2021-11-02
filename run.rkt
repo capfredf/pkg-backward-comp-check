@@ -27,6 +27,6 @@
                              (list "source-syntax" "typed-racket" "typed-racket-doc"
                                    "typed-racket-lib" "typed-racket-more" "typed-racket-test")))
                      string<=?))
-  (build-packages (list "yaml")))
+  (build-packages pkgs))
 
 (build-dependent-packages!)
