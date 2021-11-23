@@ -1,14 +1,12 @@
 #lang racket/base
+(require "conf.rkt")
 ;; TODO edit these variables
-(define pkg*
-  '("source-syntax" "typed-racket" "typed-racket-doc"
-    "typed-racket-lib" "typed-racket-more" "typed-racket-test"))
+(define pkg* (hash-ref (conf) "pkgs"))
 
-(define tgt-repo "typed-racket")
-
-(define tgt-branch "kinding")
-(define tgt-user "capfredf")
-(define tgt-commit "3ec3f43e61e9b775c2b4af47273e562ab0453a24")
+(define tgt-repo (hash-ref (conf) "repo"))
+(define tgt-branch (hash-ref (conf) "branch"))
+(define tgt-user (hash-ref (conf) "user"))
+(define tgt-commit (hash-ref (conf) "commit"))
 ;; ---
 
 ; format a GitHub package URL for a branch, see:
@@ -39,13 +37,8 @@
     (with-output-to-file p #:exists 'replace (lambda () (writeln h)))))
 
 (provide update-all)
+
 (define (update-all cat-dir)
   (for ((pkg-name (in-list pkg*)))
     (define p (build-path cat-dir "pkg" pkg-name))
     (update-pkg-file p pkg-name)))
-
-(module+ main
-  (require racket/cmdline)
-  (command-line
-    #:args (cat-dir)
-    (update-all cat-dir)))

@@ -1,4 +1,6 @@
 #hash((target-repo . "typed-racket")
       (target-branch . "kinding")
       (target-user . "capfredf")
-      (target-commit . "3ec3f43e61e9b775c2b4af47273e562ab0453a24"))
+      (target-commit . "3ec3f43e61e9b775c2b4af47273e562ab0453a24")
+      (pkgs . ("source-syntax" "typed-racket" "typed-racket-doc"
+               "typed-racket-lib" "typed-racket-more" "typed-racket-test")))
