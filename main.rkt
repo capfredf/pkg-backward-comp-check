@@ -81,5 +81,5 @@
         (build-racket!)]
        [("start-site-server")
         (start-site-server)]
-       [("build-dependent-packages")
+       [("build-packages")
         (build-dependent-packages!)]))))
