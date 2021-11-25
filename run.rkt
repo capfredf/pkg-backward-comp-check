@@ -58,7 +58,7 @@
 
 
 (define (start-site-server)
-  (void))
+  (system (format "raco static-web -d ~a" local-site-dir)))
 
 (define (init-env!)
   (unless (directory-exists? build-dir)
