@@ -2,9 +2,19 @@
 (require racket/runtime-path)
 (provide (all-defined-out))
 
-(define-runtime-path build-dir "build")
 (define conf (make-parameter #f))
-(define racket-build-image-name "capfredf/build-racket")
+
+(define-runtime-path build-dir "build")
+(define-runtime-path docker-dir "docker")
+
+(define docker-image-prefix "racket-pkg/")
+
+(define racket-build-image-name (string-append docker-image-prefix "racket-build"))
+(define racket-build-docker-file (build-path docker-dir "pkg-build-racket/"))
+
+(define pkg-build-image-name (string-append docker-image-prefix "pkg-build"))
+(define pkg-build-docker-file (build-path docker-dir "pkg-build-deps/"))
+
 (define local-site-dir (build-path build-dir "site"))
 (define catalog "catalog")
 (define local-catalog-dir (build-path build-dir catalog))

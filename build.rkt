@@ -1,5 +1,6 @@
 #lang racket/base
 (require pkg-build
+         "conf.rkt"
          racket/runtime-path)
 
 ;; Don't run as a test:
@@ -31,7 +32,7 @@
 (define (make-docker-vms name)
   (docker-vm
    #:name name
-   #:from-image "capfredf/pkg-build:latest"
+   #:from-image pkg-build-image-name
    #:env test-env
    #:shell xvfb-shell
    #:memory-mb memory-mb

@@ -46,6 +46,10 @@
     (copy (remote "build-racket:" "/root/racket-src/build/site")
           local-site-dir)))
 
+(define (build-docker-images!)
+  (docker-build #:name pkg-build-image-name #:content pkg-build-docker-file)
+  (docker-build #:name racket-build-image-name #:content racket-build-docker-file))
+
 (define (build-dependent-packages!)
   (define g (get-dependency-graph))
   (define pkgs (sort (set->list
@@ -67,9 +71,11 @@
 (module+ main
   (require racket/cmdline)
   (command-line
-   #:args (cmd conf-file)
-   (parameterize ((conf (read (open-input-file conf-file))))
+   #:args (cmd)
+   (parameterize ((conf (read (open-input-file "config.rktd"))))
      (case cmd
+       [("build-docker-images")
+        (build-docker-images!)]
        [("build-racket")
         (build-racket!)]
        [("start-site-server")
