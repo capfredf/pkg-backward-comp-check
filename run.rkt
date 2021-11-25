@@ -35,6 +35,7 @@
 
 (define (build-racket!)
   (delete-directory/files local-catalog-dir #:must-exist? #f)
+  (delete-directory/files local-site-dir #:must-exist? #f)
   (system (format "raco pkg catalog-copy https://pkgs.racket-lang.org/ ~a" local-catalog-dir))
   (delete-file (build-path local-catalog-dir "pkgs-all"))
   (update-all local-catalog-dir)
