@@ -1,23 +1,50 @@
 #lang racket/base
 (require package-analysis
+         (for-syntax syntax/parse racket/base racket/syntax)
          rebellion/collection/multidict
+         "conf.rkt"
          "catalog-updator.rkt"
+         remote-shell/docker
          racket/set
          racket/file
          racket/pretty
          racket/system
-         "conf.rkt"
          "build.rkt")
 
-(define (build-racket! catalog-dir)
-  (define RACKET-BUILD "../racket-src/")
-  (delete-directory/files catalog-dir #:must-exist? #f)
-  (system (format "raco pkg catalog-copy --from-config ~a" catalog-dir))
-  (delete-file (build-path catalog-dir "pkgs-all"))
-  (update-all catalog-dir)
-  (define catalog-path (path->complete-path "my-catalog"))
-  (parameterize ([current-directory RACKET-BUILD])
-    (system (format "make site SRC_CATALOG=~a" catalog-path))))
+(define-syntax (with-docker stx)
+  (syntax-parse stx
+    [(_ container-name e:expr ...)
+     (with-syntax ([copy (format-id stx "copy")]
+                   [exec (format-id stx "exec")]
+                   [remote (format-id stx "remote")])
+       #'(dynamic-wind
+           (lambda ()
+             (docker-create #:name container-name #:image-name racket-build-image-name)
+             (docker-start #:name container-name))
+           (lambda ()
+             (let ([remote (lambda (dir)
+                                 (format "~a:~a" container-name dir))]
+                   [copy (lambda (src dest)
+                           (docker-copy #:name container-name #:src src #:dest dest))]
+                   [exec (lambda (cmd . args)
+                           (apply docker-exec cmd args #:name container-name))])
+               e ...))
+           (lambda ()
+             (docker-stop #:name container-name)
+             (docker-remove #:name container-name))))]))
+
+(define (build-racket!)
+  (delete-directory/files local-catalog-dir #:must-exist? #f)
+  (system (format "raco pkg catalog-copy https://pkgs.racket-lang.org/ ~a" local-catalog-dir))
+  (delete-file (build-path local-catalog-dir "pkgs-all"))
+  (update-all local-catalog-dir)
+  (with-docker "build-racket"
+    (copy local-catalog-dir (remote remote-catalog-dir))
+    (exec "git" "clone" "--depth" "1" "https://github.com/racket/racket.git"
+          "/root/racket-src")
+    (exec "make" "-C" "/root/racket-src" "site" (format "SRC_CATALOG=~a" remote-catalog-dir))
+    (copy (remote "build-racket:" "/root/racket-src/build/site")
+          local-site-dir)))
 
 (define (build-dependent-packages!)
   (define g (get-dependency-graph))
@@ -25,7 +52,7 @@
                       (foldl (lambda (p acc)
                                (set-union (multidict-ref (multidict-inverse g) p) acc))
                              (set)
-                             (hash-ref (conf) "pkgs")))
+                             (hash-ref (conf) 'pkgs)))
                      string<=?))
   (build-packages pkgs))
 
@@ -33,15 +60,19 @@
 (define (start-site-server)
   (void))
 
+(define (init-env!)
+  (unless (directory-exists? build-dir)
+    (make-directory build-dir)))
+
 (module+ main
   (require racket/cmdline)
-  (define-values (cmd args)
-    (command-line #:args (cmd . args)
-                  (values cmd args)))
-  (case cmd
-    [("build-racket")
-     (build-racket! (car args))]
-    [("start-site-server")
-     (start-site-server)]
-    [("build-dependent-packages")
-     (build-dependent-packages!)]))
+  (command-line
+   #:args (cmd conf-file)
+   (parameterize ((conf (read (open-input-file conf-file))))
+     (case cmd
+       [("build-racket")
+        (build-racket!)]
+       [("start-site-server")
+        (start-site-server)]
+       [("build-dependent-packages")
+        (build-dependent-packages!)]))))

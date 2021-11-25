@@ -2,4 +2,5 @@ my-catalog/
 *.zo
 *.dep
 workdir
+build
 config.rktd

@@ -1,22 +1,18 @@
 #lang racket/base
 (require "conf.rkt")
-;; TODO edit these variables
-(define pkg* (hash-ref (conf) "pkgs"))
-
-(define tgt-repo (hash-ref (conf) "repo"))
-(define tgt-branch (hash-ref (conf) "branch"))
-(define tgt-user (hash-ref (conf) "user"))
-(define tgt-commit (hash-ref (conf) "commit"))
-;; ---
 
 ; format a GitHub package URL for a branch, see:
 ; https://docs.racket-lang.org/pkg/getting-started.html#(part._github-deploy)
 (define (make-tgt-url pkg-name)
+  (define tgt-repo (hash-ref (conf) 'repo))
+  (define tgt-branch (hash-ref (conf) 'branch))
+  (define tgt-user (hash-ref (conf) 'user))
   (format "git://github.com/~a/~a.git?path=~a#~a"
           tgt-user tgt-repo pkg-name tgt-branch))
 
 ;; update three fields: '(source checksum versions)
 (define (update-pkg-hash h pkg-name)
+  (define tgt-commit (hash-ref (conf) 'commit))
   (define u (make-tgt-url pkg-name))
   (let* ((h (hash-set h 'source u))
          (h (hash-set h 'checksum tgt-commit))
@@ -39,6 +35,7 @@
 (provide update-all)
 
 (define (update-all cat-dir)
+  (define pkg* (hash-ref (conf) 'pkgs))
   (for ((pkg-name (in-list pkg*)))
     (define p (build-path cat-dir "pkg" pkg-name))
     (update-pkg-file p pkg-name)))
