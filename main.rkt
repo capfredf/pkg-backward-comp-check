@@ -7,7 +7,6 @@
          remote-shell/docker
          racket/set
          racket/file
-         racket/pretty
          racket/system
          "build.rkt")
 
@@ -35,7 +34,6 @@
 
 (define (build-racket!)
   (delete-directory/files local-catalog-dir #:must-exist? #f)
-  (delete-directory/files local-site-dir #:must-exist? #f)
   (system (format "raco pkg catalog-copy https://pkgs.racket-lang.org/ ~a" local-catalog-dir))
   (delete-file (build-path local-catalog-dir "pkgs-all"))
   (update-all local-catalog-dir)
@@ -44,6 +42,7 @@
     (exec "git" "clone" "--depth" "1" "https://github.com/racket/racket.git"
           "/root/racket-src")
     (exec "make" "-C" "/root/racket-src" "site" (format "SRC_CATALOG=~a" remote-catalog-dir))
+    (delete-directory/files local-site-dir #:must-exist? #f)
     (copy (remote "build-racket:" "/root/racket-src/build/site")
           local-site-dir)))
 
@@ -78,6 +77,7 @@
        [("build-docker-images")
         (build-docker-images!)]
        [("build-racket")
+        (init-env!)
         (build-racket!)]
        [("start-site-server")
         (start-site-server)]
