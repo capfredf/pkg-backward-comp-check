@@ -6,6 +6,7 @@
 
 (define-runtime-path build-dir "build")
 (define-runtime-path docker-dir "docker")
+(define-runtime-path config-example-file "config.rktd.example")
 
 (define docker-image-prefix "racket-pkg/")
 

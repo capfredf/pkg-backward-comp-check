@@ -6,12 +6,13 @@ included Racket installers. In other words, this is an executable version of
 today](https://blog.racket-lang.org/2020/03/running-pkg-build-today.html).
 
 ## Usage
+
+0. (optional) use `raco pkg-bcc build-docker-images` to build all necessary docker images.
+
 1. use `raco pkg-bcc new-config` to create a new config file, `config.rktd`, in the current directory. Change the file accordingly.
 
-2. use `raco pkg-bcc build-docker-images` to build all necessary docker images.
+2. use `raco pkg-bcc build-racket` to build an racket installer.
 
-3. use `raco pkg-bcc build-racket` to build an racket installer.
+3. use `raco pkg-bcc start-site-server` to start a web server to serve the installer site
 
-4. use `raco pkg-bcc start-site-server` to start a web server to serve the installer site
-
-5. use `raco pkg-bcc build-dependent-packages` to build and check all packages specified in the `config.rktd`
+4. use `raco pkg-bcc build-dependent-packages` to build and check all packages specified in the `config.rktd`

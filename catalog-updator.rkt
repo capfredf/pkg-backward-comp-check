@@ -6,9 +6,8 @@
 (define (make-tgt-url pkg-name)
   (define tgt-repo (hash-ref (conf) 'repo))
   (define tgt-branch (hash-ref (conf) 'branch))
-  (define tgt-user (hash-ref (conf) 'user))
-  (format "git://github.com/~a/~a.git?path=~a#~a"
-          tgt-user tgt-repo pkg-name tgt-branch))
+  (format "git://github.com/~a.git?path=~a#~a"
+          tgt-repo pkg-name tgt-branch))
 
 ;; update three fields: '(source checksum versions)
 (define (update-pkg-hash h pkg-name)

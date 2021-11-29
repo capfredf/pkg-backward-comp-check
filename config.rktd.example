@@ -1,6 +1,8 @@
-#hash((target-repo . "typed-racket")
-      (target-branch . "kinding")
-      (target-user . "capfredf")
-      (target-commit . "3ec3f43e61e9b775c2b4af47273e562ab0453a24")
-      (pkgs . ("source-syntax" "typed-racket" "typed-racket-doc"
-               "typed-racket-lib" "typed-racket-more" "typed-racket-test")))
+#hash((repo . ;; the github repo name-for-packages, e.g. "racket/typed-racket"
+            )
+      (branch . ;; the branch name
+              )
+      (commit . ;; the git commit, e.g. "3ec3f43e61e9b775c2b4af47273e562ab0453a24"
+              )
+      (pkgs . ;; a list of packages, e.g. ("source-syntax" "typed-racket" "typed-racket-doc" "typed-racket-lib" "typed-racket-more" "typed-racket-test")
+            ))

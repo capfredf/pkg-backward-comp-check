@@ -72,14 +72,16 @@
   (require racket/cmdline)
   (command-line
    #:args (cmd)
-   (parameterize ((conf (read (open-input-file "config.rktd"))))
-     (case cmd
-       [("build-docker-images")
-        (build-docker-images!)]
-       [("build-racket")
-        (init-env!)
-        (build-racket!)]
-       [("start-site-server")
-        (start-site-server)]
-       [("build-packages")
-        (build-dependent-packages!)]))))
+   (if (equal? cmd "new-config")
+       (copy-file config-example-file (build-path (current-directory) "config.rktd") #t)
+       (parameterize ((conf (read (open-input-file "config.rktd"))))
+         (case cmd
+           [("build-docker-images")
+            (build-docker-images!)]
+           [("build-racket")
+            (init-env!)
+            (build-racket!)]
+           [("start-site-server")
+            (start-site-server)]
+           [("build-packages")
+            (build-dependent-packages!)])))))
