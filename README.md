@@ -1,6 +1,6 @@
 # Backward Compatibility Checker
 
-A package to check the backward compatibility of changes to Racket or packages
+A package to check backward compatibility of changes to Racket or packages
 included the Racket base distribution. In other words, this is an executable version of
 [Running a pkg-build
 today](https://blog.racket-lang.org/2020/03/running-pkg-build-today.html).
