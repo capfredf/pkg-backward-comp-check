@@ -1,4 +1,4 @@
-# Package Backward Compatibility Check
+# Package Backward Compatibility Checker
 
 A package to check the backward compatibility of changes to Racket or a package
 included Racket installers. In other words, this is an executable version of
