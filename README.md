@@ -19,8 +19,8 @@ run your docker daemon in the rootless mode.
 
 3. use `raco pkg-bcc start-site-server` to start a web server to serve the installer site
 
-4. use `raco pkg-bcc build-dependent-packages` to build and check all packages
-specified in the `config.rktd`. After it is done, results of building and test
-the packages can be found in `workdir/server/built`. See [the
+4. use `raco pkg-bcc build-dependent-packages` to build and check all dependents of
+the packages specified in the `config.rktd`. After it is done, results of building and testing
+those packages can be found in `workdir/server/built`. See [the
 page](https://docs.racket-lang.org/pkg-build/work-dir.html) of the
 documentation for pkg-build for more details.
