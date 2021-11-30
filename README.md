@@ -8,7 +8,7 @@ today](https://blog.racket-lang.org/2020/03/running-pkg-build-today.html).
 ## Usage
 
 Since the package builds racket and packages using docker, you need to
-run this following commands except `raco pkg-bcc new-config` as a root user or
+run all the following commands except `raco pkg-bcc new-config` as a root user or
 run your docker daemon in the rootless mode.
 
 0. (optional) use `raco pkg-bcc build-docker-images` to build all necessary docker images.
