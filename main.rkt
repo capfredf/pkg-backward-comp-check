@@ -84,4 +84,5 @@
            [("start-site-server")
             (start-site-server)]
            [("build-packages")
-            (build-dependent-packages!)]j)))))
+            (build-dependent-packages!)]
+           [else (eprintf "invalid command: ~a" cmd)])))))
