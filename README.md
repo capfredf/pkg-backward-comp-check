@@ -11,15 +11,13 @@ Since the package builds racket and packages using docker, you need to
 run all the following commands except `raco pkg-bcc new-config` as a root user or
 run your docker daemon in the rootless mode.
 
-0. (optional) use `raco pkg-bcc build-docker-images` to build all necessary docker images.
+1. use `raco bc-check new-config` to create a new config file, `config.rktd`, in the current directory. Change the file accordingly.
 
-1. use `raco pkg-bcc new-config` to create a new config file, `config.rktd`, in the current directory. Change the file accordingly.
+2. use `raco bc-check build-racket` to build an racket installer.
 
-2. use `raco pkg-bcc build-racket` to build an racket installer.
+3. use `raco bc-check start-site-server` to start a web server to serve the installer site
 
-3. use `raco pkg-bcc start-site-server` to start a web server to serve the installer site
-
-4. use `raco pkg-bcc build-dependent-packages` to build and check all dependents of
+4. use `raco bc-check build-dependent-packages` to build and check all dependents of
 the packages specified in the `config.rktd`. After it is done, results of building and testing
 those packages can be found in `workdir/server/built`. See [the
 page](https://docs.racket-lang.org/pkg-build/work-dir.html) of the

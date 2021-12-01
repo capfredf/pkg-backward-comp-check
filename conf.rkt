@@ -8,12 +8,12 @@
 (define-runtime-path docker-dir "docker")
 (define-runtime-path config-example-file "config.rktd.example")
 
-(define docker-image-prefix "racket-pkg/")
+(define docker-image-prefix "capfredf/")
 
-(define racket-build-image-name (string-append docker-image-prefix "racket-build"))
+(define racket-build-image-name (string-append docker-image-prefix "racket-pkg-bcc:racket-build"))
 (define racket-build-docker-file (build-path docker-dir "pkg-build-racket/"))
 
-(define pkg-build-image-name (string-append docker-image-prefix "pkg-build"))
+(define pkg-build-image-name (string-append docker-image-prefix "racket-pkg-bcc:pkg-build"))
 (define pkg-build-docker-file (build-path docker-dir "pkg-build-deps/"))
 
 (define local-site-dir (build-path build-dir "site"))
