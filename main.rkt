@@ -10,38 +10,37 @@
          racket/system
          "build.rkt")
 
+(define CONTAINER-NAME "build-racket")
 (define-syntax (with-docker stx)
   (syntax-parse stx
     [(_ container-name e:expr ...)
      (with-syntax ([copy (format-id stx "copy")]
                    [exec (format-id stx "exec")]
                    [remote (format-id stx "remote")])
-       #'(dynamic-wind
-           (lambda ()
-             (docker-create #:name container-name #:image-name racket-build-image-name)
-             (docker-start #:name container-name))
-           (lambda ()
-             (let ([remote (lambda (dir)
-                                 (format "~a:~a" container-name dir))]
-                   [copy (lambda (src dest)
-                           (docker-copy #:name container-name #:src src #:dest dest))]
-                   [exec (lambda (cmd . args)
-                           (apply docker-exec cmd args #:name container-name))])
-               e ...))
-           (lambda ()
-             (docker-stop #:name container-name)
-             (docker-remove #:name container-name))))]))
+       #'(begin
+           (docker-start #:name container-name)
+           (let ([remote (lambda (dir)
+                           (format "~a:~a" container-name dir))]
+                 [copy (lambda (src dest)
+                         (docker-copy #:name container-name #:src src #:dest dest))]
+                 [exec (lambda (cmd . args)
+                         (apply docker-exec cmd args #:name container-name))])
+             e ...
+             (docker-stop #:name container-name))))]))
 
 (define (build-racket!)
   (delete-directory/files local-catalog-dir #:must-exist? #f)
   (system (format "raco pkg catalog-copy https://pkgs.racket-lang.org/ ~a" local-catalog-dir))
   (delete-file (build-path local-catalog-dir "pkgs-all"))
   (update-all local-catalog-dir)
-  (with-docker "build-racket"
+  (with-docker CONTAINER-NAME
     (copy local-catalog-dir (remote remote-catalog-dir))
     (exec "git" "clone" "--depth" "1" "https://github.com/racket/racket.git"
           "/root/racket-src")
-    (exec "make" "-C" "/root/racket-src" "site" (format "SRC_CATALOG=~a" remote-catalog-dir))
+    (exec "make" "-C" "/root/racket-src" "site"
+          (format "SRC_CATALOG=~a" remote-catalog-dir)
+          "SERVER_HOSTS=127.0.0.1"
+          "SERVER=127.0.0.1")
     (delete-directory/files local-site-dir #:must-exist? #f)
     (copy (remote "build-racket:" "/root/racket-src/build/site")
           local-site-dir)))
@@ -64,6 +63,13 @@
 (define (start-site-server)
   (system (format "raco static-web -d ~a" local-site-dir)))
 
+(define (create-fresh-container!)
+  (when (docker-id #:name CONTAINER-NAME)
+    (when (docker-running? #:name CONTAINER-NAME)
+      (docker-stop #:name CONTAINER-NAME))
+    (docker-remove #:name CONTAINER-NAME))
+  (docker-create #:name CONTAINER-NAME #:image-name racket-build-image-name))
+
 (define (init-env!)
   (unless (directory-exists? build-dir)
     (make-directory build-dir)))
@@ -78,6 +84,8 @@
          (case cmd
            [("build-docker-images")
             (build-docker-images!)]
+           [("create-fresh-container")
+            (create-fresh-container!)]
            [("build-racket")
             (init-env!)
             (build-racket!)]
