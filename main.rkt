@@ -42,7 +42,7 @@
           "SERVER_HOSTS=127.0.0.1"
           "SERVER=127.0.0.1")
     (delete-directory/files local-site-dir #:must-exist? #f)
-    (copy (remote "build-racket:" "/root/racket-src/build/site")
+    (copy (remote "/root/racket-src/build/site")
           local-site-dir)))
 
 (define (build-docker-images!)
