@@ -20,7 +20,7 @@ the current directory. Change the file accordingly.
 
 4. use `raco bc-check start-site-server` to start a web server to serve the installer site
 
-5. use `raco bc-check build-dependent-packages` to build and check all dependents of
+5. use `raco bc-check build-packages` to build and check all dependents of
 the packages specified in the `config.rktd`. After it is done, results of building and testing
 those packages can be found in `workdir/server/built`. See [the
 page](https://docs.racket-lang.org/pkg-build/work-dir.html) of the
