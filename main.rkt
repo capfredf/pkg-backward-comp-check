@@ -61,7 +61,8 @@
 
 
 (define (start-site-server)
-  (system (format "raco static-web -d ~a" local-site-dir)))
+  (define racket-path (find-system-path 'exec-file))
+  (system (format "~a -l raco -- static-web -d ~a" racket-path local-site-dir)))
 
 (define (create-fresh-container!)
   (when (docker-id #:name CONTAINER-NAME)
