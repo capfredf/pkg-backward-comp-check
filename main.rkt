@@ -7,6 +7,7 @@
          remote-shell/docker
          racket/set
          racket/file
+         racket/string
          racket/system
          "build.rkt")
 
@@ -49,15 +50,24 @@
   (docker-build #:name pkg-build-image-name #:content pkg-build-docker-file)
   (docker-build #:name racket-build-image-name #:content racket-build-docker-file))
 
-(define (build-dependent-packages!)
-  (define g (get-dependency-graph))
-  (define pkgs (sort (set->list
-                      (foldl (lambda (p acc)
-                               (set-union (multidict-ref (multidict-inverse g) p) acc))
-                             (set)
-                             (hash-ref (conf) 'pkgs)))
-                     string<=?))
-  (build-packages pkgs))
+(define (get-local-installer-name)
+  (for/first ([path (in-list (directory-list (build-path local-site-dir "installers")))]
+              #:when (let ([i (path->string path)])
+                       (and (string-prefix? i "racket-")
+                            (string-suffix? i ".sh"))))
+    (path->string path)))
+
+(define (build-dependent-packages! [installer-name #f])
+  (let* ([installer-name (or installer-name (get-local-installer-name))]
+         [version (cadr (regexp-match #px"racket-([\\d.]+)-.*?.sh" installer-name))])
+    (define g (get-dependency-graph))
+    (define pkgs (sort (set->list
+                        (foldl (lambda (p acc)
+                                 (set-union (multidict-ref (multidict-inverse g) p) acc))
+                               (set)
+                               (hash-ref (conf) 'pkgs)))
+                       string<=?))
+    (build-packages pkgs installer-name version)))
 
 
 (define (start-site-server)

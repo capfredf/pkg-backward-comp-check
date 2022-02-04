@@ -9,12 +9,12 @@
 (define-runtime-path workdir "workdir")
 
 (provide build-packages)
-(define (build-packages packages)
+(define (build-packages packages installer-name version)
   (build-pkgs
    #:work-dir workdir
    #:snapshot-url "http://127.0.0.1:8000"
-   #:installer-name "racket-8.3.0.5-x86_64-linux.sh"
-   #:pkgs-for-version "8.3.0.5"
+   #:installer-name installer-name
+   #:pkgs-for-version version
    #:only-packages packages
    #:built-at-site? #t
    #:site-url "https://127.0.0.1:8000"
